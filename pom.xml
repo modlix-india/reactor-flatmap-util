@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.fincity.nocode</groupId>
-	<artifactId>rector-flatmap-util</artifactId>
+	<artifactId>reactor-flatmap-util</artifactId>
 	<version>1.0.0</version>
-	<name>rector-flatmap-util</name>
+	<name>reactor-flatmap-util</name>
 	<description>Flatmap is a callback hell, this util will help write clear code.</description>
 	<properties>
 		<java.version>8</java.version>
@@ -21,7 +21,7 @@
 	<licenses>
 		<license>
 			<name>MIT License</name>
-			<url>https://github.com/fincity-india/rector-flatmap-util/blob/master/LICENSE</url>
+			<url>https://github.com/fincity-india/reactor-flatmap-util/blob/master/LICENSE</url>
 		</license>
 	</licenses>
 	<developers>
@@ -32,9 +32,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:git@github.com:fincity-india/rector-flatmap-util.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:fincity-india/rector-flatmap-util.git</developerConnection>
-		<url>https://github.com/fincity-india/rector-flatmap-util</url>
+		<connection>scm:git:git@github.com:fincity-india/reactor-flatmap-util.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:fincity-india/reactor-flatmap-util.git</developerConnection>
+		<url>https://github.com/fincity-india/reactor-flatmap-util/tree/master/</url>
 	</scm>
 	<build>
 		<plugins>
