@@ -16,47 +16,47 @@ public Mono<AuthenticationResponse> authenticate(AuthenticationRequest authReque
             ServerHttpRequest request,
 	        ServerHttpResponse response) {
 
-        // Retrive the Client id based on the URL
-		Mono<ULong> clientId = this.clientService.getClientId(request);
+    // Retrive the Client id based on the URL
+    Mono<ULong> clientId = this.clientService.getClientId(request);
 
-        // Retrive the User by searching in Client's umbrella
-		Mono<User> user = clientId.flatMap(cid ->
-			userService.findByClientIdsUserName(cid, authRequest.getUserName(), authRequest.getIdentifierType()));
+    // Retrive the User by searching in Client's umbrella
+    Mono<User> user = clientId.flatMap(cid ->
+        userService.findByClientIdsUserName(cid, authRequest.getUserName(), authRequest.getIdentifierType()));
 
-        // Retrive the User's Client object
-		Mono<Client> client = user.flatMap(u -> this.clientService.readInternal(u.getClientId()));
+    // Retrive the User's Client object
+    Mono<Client> client = user.flatMap(u -> this.clientService.readInternal(u.getClientId()));
 
-		URI uri = request.getURI();
+    URI uri = request.getURI();
 
-		InetSocketAddress inetAddress = request.getRemoteAddress();
-		final String setAddress = inetAddress == null ? null : inetAddress.getHostString();
+    InetSocketAddress inetAddress = request.getRemoteAddress();
+    final String setAddress = inetAddress == null ? null : inetAddress.getHostString();
 
-        // Map the user to check password
-		return user.flatMap(u ->
-			checkPassword(authRequest, u).flatMap(e ->
+    // Map the user to check password
+    return user.flatMap(u ->
+        checkPassword(authRequest, u).flatMap(e ->
 
-                // Map the client to get client's password policy
-				client.flatMap(c ->
-					clientService.getClientPasswordPolicy(c.getId()).flatMap(pol ->
+            // Map the client to get client's password policy
+            client.flatMap(c ->
+                clientService.getClientPasswordPolicy(c.getId()).flatMap(pol ->
 
-                        // Map to check if the user reached maximum attempts based on the policy
-						checkFailedAttempts(u, pol).flatMap(s ->
-						{
-					        userService.resetFailedAttempt(u.getId())
-					                .subscribe();
+                    // Map to check if the user reached maximum attempts based on the policy
+                    checkFailedAttempts(u, pol).flatMap(s ->
+                    {
+                        userService.resetFailedAttempt(u.getId())
+                                .subscribe();
 
-					        soxLogService.create(new SoxLog().setObjectId(u.getId())
-					                .setActionName(SecuritySoxLogActionName.LOGIN)
-					                .setObjectName(SecuritySoxLogObjectName.USER)
-					                .setDescription("Successful"))
-					                .subscribe();
+                        soxLogService.create(new SoxLog().setObjectId(u.getId())
+                                .setActionName(SecuritySoxLogActionName.LOGIN)
+                                .setObjectName(SecuritySoxLogObjectName.USER)
+                                .setDescription("Successful"))
+                                .subscribe();
 
-                            // If everything checksout, return the created token
-					        return clientId.flatMap(cid -> makeToken(authRequest, response, uri, setAddress, u, c, cid));
+                        // If everything checksout, return the created token
+                        return clientId.flatMap(cid -> makeToken(authRequest, response, uri, setAddress, u, c, cid));
 
-				        })))))
-                // If for some reason any of the above checks fails throw a credential error
-		        .switchIfEmpty(Mono.defer(this::credentialError));
+                    })))))
+            // If for some reason any of the above checks fails throw a credential error
+            .switchIfEmpty(Mono.defer(this::credentialError));
 	}
 ```
 
@@ -67,40 +67,40 @@ public Mono<AuthenticationResponse> authenticate(AuthenticationRequest authReque
             ServerHttpRequest request,
 	        ServerHttpResponse response) {
 
-		return flatMapMono(
+    return flatMapMono(
 
-		        () -> this.clientService.getClientId(request),
+        () -> this.clientService.getClientId(request),
 
-		        (clientId) -> userService.findByClientIdsUserName(clientId, authRequest.getUserName(),
-		                authRequest.getIdentifierType()),
+        (clientId) -> userService.findByClientIdsUserName(clientId, authRequest.getUserName(),
+                authRequest.getIdentifierType()),
 
-		        (clientId, user) -> this.clientService.readInternal(user.getClientId()),
+        (clientId, user) -> this.clientService.readInternal(user.getClientId()),
 
-		        (clientId, user, client) -> this.checkPassword(authRequest, user),
+        (clientId, user, client) -> this.checkPassword(authRequest, user),
 
-		        (clientId, user, client, passwordChecked) -> clientService.getClientPasswordPolicy(client.getId()),
+        (clientId, user, client, passwordChecked) -> clientService.getClientPasswordPolicy(client.getId()),
 
-		        (clientId, user, client, passwordChecked, policy) -> this.checkFailedAttempts(user, policy),
+        (clientId, user, client, passwordChecked, policy) -> this.checkFailedAttempts(user, policy),
 
-		        (clientId, user, client, passwordChecked, policy, j) ->
-				{
+        (clientId, user, client, passwordChecked, policy, j) ->
+        {
 
-			        userService.resetFailedAttempt(user.getId())
-			                .subscribe();
+            userService.resetFailedAttempt(user.getId())
+                    .subscribe();
 
-			        soxLogService.create(new SoxLog().setObjectId(user.getId())
-			                .setActionName(SecuritySoxLogActionName.LOGIN)
-			                .setObjectName(SecuritySoxLogObjectName.USER)
-			                .setDescription("Successful"))
-			                .subscribe();
+            soxLogService.create(new SoxLog().setObjectId(user.getId())
+                    .setActionName(SecuritySoxLogActionName.LOGIN)
+                    .setObjectName(SecuritySoxLogObjectName.USER)
+                    .setDescription("Successful"))
+                    .subscribe();
 
-			        URI uri = request.getURI();
+            URI uri = request.getURI();
 
-			        InetSocketAddress inetAddress = request.getRemoteAddress();
-			        final String hostAddress = inetAddress == null ? null : inetAddress.getHostString();
+            InetSocketAddress inetAddress = request.getRemoteAddress();
+            final String hostAddress = inetAddress == null ? null : inetAddress.getHostString();
 
-			        return makeToken(authRequest, response, uri, hostAddress, user, client, clientId);
-		        }).switchIfEmpty(Mono.defer(this::credentialError));
+            return makeToken(authRequest, response, uri, hostAddress, user, client, clientId);
+        }).switchIfEmpty(Mono.defer(this::credentialError));
 	}
 ```
 
