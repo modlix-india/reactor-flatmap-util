@@ -128,7 +128,7 @@ compile "com.fincity.nocode:reactor-flatmap-util:1.0.0"
 
 ### flatMapMono
 
-`flatMapMono` takes 2 to 10 functions as parameters. Each parameter is a function with increasing number of parameters. First parameter is a `Supplier<Mono<F>>`, second is a `Function<F, Mono<S>>` are mandatory and the next parameters are functions with increasing number of parameters. Each parameter's function's parameter is return Mono's type. This function call will return a Mono of last parameter's function's Mono.
+`flatMapMono` takes 2 to 10 functions as parameters. Each parameter is a function with increasing number of parameters. First parameter is a `Supplier<Mono<F>>`, second is a `Function<F, Mono<S>>` are mandatory and the next parameters are functions with increasing number of parameters. Each argument's function's parameter is the value of Mono returned from the previous function argument. `flatMapMono` call will return a Mono of last function argument's return Mono.
 
 **Example 1:**
 
