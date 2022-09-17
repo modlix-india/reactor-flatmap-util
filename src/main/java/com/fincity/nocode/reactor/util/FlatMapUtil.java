@@ -333,8 +333,7 @@ public class FlatMapUtil {
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
-					                                .flatMap(
-					                                        q -> pMono.apply(fv, sv, tv, q.orElse(null)));
+					                                .flatMap(q -> pMono.apply(fv, sv, tv, q.orElse(null)));
 				                        });
 			                });
 		        });
@@ -499,8 +498,7 @@ public class FlatMapUtil {
 								                                                                Optional.empty())
 								                                                        .flatMap(se -> oMono.apply(fv,
 								                                                                sv, tv, qv, pv, hv,
-								                                                                se.isEmpty() ? null
-								                                                                        : se.get()));
+								                                                                se.orElse(null)));
 							                                                });
 						                                        });
 					                                });
@@ -570,8 +568,7 @@ public class FlatMapUtil {
 								                                                        .flatMap(se ->
 																						{
 
-									                                                        E sev = se.isEmpty() ? null
-									                                                                : se.get();
+									                                                        E sev = se.orElse(null);
 									                                                        return oMono.apply(fv, sv,
 									                                                                tv, qv, pv, hv, sev)
 									                                                                .map(Optional::of)
@@ -585,9 +582,8 @@ public class FlatMapUtil {
 									                                                                                pv,
 									                                                                                hv,
 									                                                                                sev,
-									                                                                                o.isEmpty()
-									                                                                                        ? null
-									                                                                                        : o.get()));
+									                                                                                o.orElse(
+									                                                                                        null)));
 								                                                        });
 							                                                });
 						                                        });
@@ -654,19 +650,34 @@ public class FlatMapUtil {
 								                                                return seMono
 								                                                        .apply(fv, sv, tv, qv, pv, hv)
 								                                                        .map(Optional::of)
-								                                                        .defaultIfEmpty(Optional.empty())
-								                                                        .flatMap(se -> {
-								                                                        	
-								                                                        	E sev = se.orElse(null);
-								                                                        	return oMono.apply(fv, sv, tv, qv, pv, hv, sev)
-								                                                        			.map(Optional::of)
-								                                                        			.defaultIfEmpty(Optional.empty())
-													                                                .flatMap(o -> {
-													                                                	
-													                                                	O ov = o.isEmpty()? null : o.get();
-													                                                	return nMono.apply(fv, sv, tv, qv, pv, hv, sev, ov)
-													                                                			.map(Optional::of)
-														                                                        .defaultIfEmpty(Optional.empty())
+								                                                        .defaultIfEmpty(
+								                                                                Optional.empty())
+								                                                        .flatMap(se ->
+																						{
+
+									                                                        E sev = se.orElse(null);
+									                                                        return oMono.apply(fv, sv,
+									                                                                tv, qv, pv, hv, sev)
+									                                                                .map(Optional::of)
+									                                                                .defaultIfEmpty(
+									                                                                        Optional.empty())
+									                                                                .flatMap(o ->
+																									{
+
+										                                                                O ov = o.orElse(
+										                                                                        null);
+										                                                                return nMono
+										                                                                        .apply(fv,
+										                                                                                sv,
+										                                                                                tv,
+										                                                                                qv,
+										                                                                                pv,
+										                                                                                hv,
+										                                                                                sev,
+										                                                                                ov)
+										                                                                        .map(Optional::of)
+										                                                                        .defaultIfEmpty(
+										                                                                                Optional.empty())
 										                                                                        .flatMap(
 										                                                                                n -> dMono
 										                                                                                        .apply(fv,
@@ -677,8 +688,9 @@ public class FlatMapUtil {
 										                                                                                                hv,
 										                                                                                                sev,
 										                                                                                                ov,
-										                                                                                                n.isEmpty()? null : n.get()));
-													                                                });
+										                                                                                                n.orElse(
+										                                                                                                        null)));
+									                                                                });
 								                                                        });
 							                                                });
 						                                        });
