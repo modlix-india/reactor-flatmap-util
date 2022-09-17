@@ -1,5 +1,6 @@
 package com.fincity.nocode.reactor.util;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,16 +26,6 @@ public class FlatMapUtil {
 		        .flatMap(sMono::apply);
 	}
 
-	public static <F, S> Mono<Tuple2<F, S>> flatMapConsolidate(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono) {
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.map(s -> Tuples.of(f, s));
-		        });
-	}
-
 	public static <F, S, T> Mono<T> flatMapMono(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
 	        BiFunction<F, S, Mono<T>> tMono) {
 
@@ -43,22 +34,6 @@ public class FlatMapUtil {
 				{
 			        Mono<S> ms = sMono.apply(f);
 			        return ms.flatMap(s -> tMono.apply(f, s));
-		        });
-
-	}
-
-	public static <F, S, T> Mono<Tuple3<F, S, T>> flatMapConsolidate(Supplier<Mono<F>> fMono,
-	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono) {
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.map(t -> Tuples.of(f, s, t));
-			        });
 		        });
 
 	}
@@ -74,26 +49,6 @@ public class FlatMapUtil {
 
 				        Mono<T> mt = tMono.apply(f, s);
 				        return mt.flatMap(t -> qMono.apply(f, s, t));
-			        });
-		        });
-
-	}
-
-	public static <F, S, T, Q> Mono<Tuple4<F, S, T, Q>> flatMapConsolidate(Supplier<Mono<F>> fMono,
-	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono) {
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.flatMap(t -> {
-
-					        Mono<Q> mq = qMono.apply(f, s, t);
-					        return mq.map(q -> Tuples.of(f, s, t, q));
-				        });
 			        });
 		        });
 
@@ -120,31 +75,6 @@ public class FlatMapUtil {
 
 	}
 
-	public static <F, S, T, Q, P> Mono<Tuple5<F, S, T, Q, P>> flatMapConsolidate(Supplier<Mono<F>> fMono,
-	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
-	        QuadFunction<F, S, T, Q, Mono<P>> pMono) {
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.flatMap(t -> {
-
-					        Mono<Q> mq = qMono.apply(f, s, t);
-					        return mq.flatMap(q -> {
-
-						        Mono<P> mp = pMono.apply(f, s, t, q);
-						        return mp.map(p -> Tuples.of(f, s, t, q, p));
-					        });
-				        });
-			        });
-		        });
-
-	}
-
 	public static <F, S, T, Q, P, H> Mono<H> flatMapMono(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
 	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
 	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono) {
@@ -163,35 +93,6 @@ public class FlatMapUtil {
 
 						        Mono<P> mp = pMono.apply(f, s, t, q);
 						        return mp.flatMap(p -> hMono.apply(f, s, t, q, p));
-					        });
-				        });
-			        });
-		        });
-
-	}
-
-	public static <F, S, T, Q, P, H> Mono<Tuple6<F, S, T, Q, P, H>> flatMapConsolidate(Supplier<Mono<F>> fMono,
-	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
-	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono) {
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.flatMap(t -> {
-
-					        Mono<Q> mq = qMono.apply(f, s, t);
-					        return mq.flatMap(q -> {
-
-						        Mono<P> mp = pMono.apply(f, s, t, q);
-						        return mp.flatMap(p -> {
-
-							        Mono<H> mh = hMono.apply(f, s, t, q, p);
-							        return mh.map(h -> Tuples.of(f, s, t, q, p, h));
-						        });
 					        });
 				        });
 			        });
@@ -229,40 +130,6 @@ public class FlatMapUtil {
 
 	}
 
-	public static <F, S, T, Q, P, H, E> Mono<Tuple7<F, S, T, Q, P, H, E>> flatMapConsolidate(Supplier<Mono<F>> fMono,
-	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
-	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
-	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono) {
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.flatMap(t -> {
-
-					        Mono<Q> mq = qMono.apply(f, s, t);
-					        return mq.flatMap(q -> {
-
-						        Mono<P> mp = pMono.apply(f, s, t, q);
-						        return mp.flatMap(p -> {
-
-							        Mono<H> mh = hMono.apply(f, s, t, q, p);
-							        return mh.flatMap(h -> {
-
-								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
-								        return mSe.map(se -> Tuples.of(f, s, t, q, p, h, se));
-							        });
-						        });
-					        });
-				        });
-			        });
-		        });
-
-	}
-
 	public static <F, S, T, Q, P, H, E, O> Mono<O> flatMapMono(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, // NOSONAR
 	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
 	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
@@ -289,46 +156,6 @@ public class FlatMapUtil {
 
 								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
 								        return mSe.flatMap(se -> oMono.apply(f, s, t, q, p, h, se));
-							        });
-						        });
-					        });
-				        });
-			        });
-		        });
-
-	}
-
-	public static <F, S, T, Q, P, H, E, O> Mono<Tuple8<F, S, T, Q, P, H, E, O>> flatMapConsolidate( // NOSONAR
-	        Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono,
-	        TriFunction<F, S, T, Mono<Q>> qMono, QuadFunction<F, S, T, Q, Mono<P>> pMono,
-	        PentaFunction<F, S, T, Q, P, Mono<H>> hMono, HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono,
-	        SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono) {
-		// Required more than 8 arguments
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.flatMap(t -> {
-
-					        Mono<Q> mq = qMono.apply(f, s, t);
-					        return mq.flatMap(q -> {
-
-						        Mono<P> mp = pMono.apply(f, s, t, q);
-						        return mp.flatMap(p -> {
-
-							        Mono<H> mh = hMono.apply(f, s, t, q, p);
-							        return mh.flatMap(h -> {
-
-								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
-								        return mSe.flatMap(se -> {
-
-									        Mono<O> mo = oMono.apply(f, s, t, q, p, h, se);
-									        return mo.map(o -> Tuples.of(f, s, t, q, p, h, se, o));
-								        });
 							        });
 						        });
 					        });
@@ -378,53 +205,8 @@ public class FlatMapUtil {
 
 	}
 
-	public static <F, S, T, Q, P, H, E, O, N> Mono<Tuple9<F, S, T, Q, P, H, E, O, N>> flatMapConsolidate( // NOSONAR
-	        Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
-	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
-	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
-	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono, SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono,
-	        OctaFunction<F, S, T, Q, P, H, E, O, Mono<N>> nMono) {
-		// Required more than 8 arguments
-
-		return fMono.get()
-		        .flatMap(f ->
-				{
-			        Mono<S> ms = sMono.apply(f);
-			        return ms.flatMap(s -> {
-
-				        Mono<T> mt = tMono.apply(f, s);
-				        return mt.flatMap(t -> {
-
-					        Mono<Q> mq = qMono.apply(f, s, t);
-					        return mq.flatMap(q -> {
-
-						        Mono<P> mp = pMono.apply(f, s, t, q);
-						        return mp.flatMap(p -> {
-
-							        Mono<H> mh = hMono.apply(f, s, t, q, p);
-							        return mh.flatMap(h -> {
-
-								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
-								        return mSe.flatMap(se -> {
-
-									        Mono<O> mo = oMono.apply(f, s, t, q, p, h, se);
-									        return mo.flatMap(o -> {
-
-										        Mono<N> mn = nMono.apply(f, s, t, q, p, h, se, o);
-										        return mn.map(n -> new Tuple9<>(f, s, t, q, p, h, se, o, n));
-									        });
-								        });
-							        });
-						        });
-					        });
-				        });
-			        });
-		        });
-
-	}
-
-	public static <F, S, T, Q, P, H, E, O, N, D> Mono<D> flatMapMono(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, // NOSONAR
-	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	public static <F, S, T, Q, P, H, E, O, N, D> Mono<D> flatMapMono(Supplier<Mono<F>> fMono, // NOSONAR
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
 	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
 	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono, SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono,
 	        OctaFunction<F, S, T, Q, P, H, E, O, Mono<N>> nMono,
@@ -457,6 +239,663 @@ public class FlatMapUtil {
 
 										        Mono<N> mn = nMono.apply(f, s, t, q, p, h, se, o);
 										        return mn.flatMap(n -> dMono.apply(f, s, t, q, p, h, se, o, n));
+									        });
+								        });
+							        });
+						        });
+					        });
+				        });
+			        });
+		        });
+
+	}
+
+	public static <F, S> Mono<S> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono) {
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f -> sMono.apply(f.isEmpty() ? null : f.get()));
+	}
+
+	public static <F, S, T> Mono<T> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
+	        BiFunction<F, S, Mono<T>> tMono) {
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s -> tMono.apply(fv, s.isEmpty() ? null : s.get()));
+		        });
+	}
+
+	public static <F, S, T, Q> Mono<Q> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
+	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono) {
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t -> qMono.apply(fv, sv, t.isEmpty() ? null : t.get()));
+			                });
+		        });
+	}
+
+	public static <F, S, T, Q, P> Mono<P> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
+	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono) {
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t ->
+										{
+
+					                        T tv = t.isEmpty() ? null : t.get();
+					                        return qMono.apply(fv, sv, tv)
+					                                .map(Optional::of)
+					                                .defaultIfEmpty(Optional.empty())
+					                                .flatMap(
+					                                        q -> pMono.apply(fv, sv, tv, q.isEmpty() ? null : q.get()));
+				                        });
+			                });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H> Mono<H> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, // NOSONAR
+	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono) {
+		// Deep structure
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t ->
+										{
+
+					                        T tv = t.isEmpty() ? null : t.get();
+					                        return qMono.apply(fv, sv, tv)
+					                                .map(Optional::of)
+					                                .defaultIfEmpty(Optional.empty())
+					                                .flatMap(q ->
+													{
+
+						                                Q qv = q.isEmpty() ? null : q.get();
+						                                return pMono.apply(fv, sv, tv, qv)
+						                                        .map(Optional::of)
+						                                        .defaultIfEmpty(Optional.empty())
+						                                        .flatMap(p -> hMono.apply(fv, sv, tv, qv,
+						                                                p.isEmpty() ? null : p.get()));
+					                                });
+				                        });
+			                });
+		        });
+	}
+
+	public static <F, S, T, Q, P, H, E> Mono<E> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, // NOSONAR
+	        BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
+	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono) {
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t ->
+										{
+
+					                        T tv = t.isEmpty() ? null : t.get();
+					                        return qMono.apply(fv, sv, tv)
+					                                .map(Optional::of)
+					                                .defaultIfEmpty(Optional.empty())
+					                                .flatMap(q ->
+													{
+
+						                                Q qv = q.isEmpty() ? null : q.get();
+						                                return pMono.apply(fv, sv, tv, qv)
+						                                        .map(Optional::of)
+						                                        .defaultIfEmpty(Optional.empty())
+						                                        .flatMap(p ->
+																{
+
+							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        return hMono.apply(fv, sv, tv, qv, pv)
+							                                                .map(Optional::of)
+							                                                .defaultIfEmpty(Optional.empty())
+							                                                .flatMap(h -> seMono.apply(fv, sv, tv, qv,
+							                                                        pv, h.isEmpty() ? null : h.get()));
+						                                        });
+					                                });
+				                        });
+			                });
+		        });
+	}
+
+	public static <F, S, T, Q, P, H, E, O> Mono<O> flatMapMonoWithNull(Supplier<Mono<F>> fMono, // NOSONAR
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
+	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono, SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono) {
+		// Required more than 8 arguments
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t ->
+										{
+
+					                        T tv = t.isEmpty() ? null : t.get();
+					                        return qMono.apply(fv, sv, tv)
+					                                .map(Optional::of)
+					                                .defaultIfEmpty(Optional.empty())
+					                                .flatMap(q ->
+													{
+
+						                                Q qv = q.isEmpty() ? null : q.get();
+						                                return pMono.apply(fv, sv, tv, qv)
+						                                        .map(Optional::of)
+						                                        .defaultIfEmpty(Optional.empty())
+						                                        .flatMap(p ->
+																{
+
+							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        return hMono.apply(fv, sv, tv, qv, pv)
+							                                                .map(Optional::of)
+							                                                .defaultIfEmpty(Optional.empty())
+							                                                .flatMap(h ->
+																			{
+
+								                                                H hv = h.isEmpty() ? null : h.get();
+
+								                                                return seMono
+								                                                        .apply(fv, sv, tv, qv, pv, hv)
+								                                                        .map(Optional::of)
+								                                                        .defaultIfEmpty(
+								                                                                Optional.empty())
+								                                                        .flatMap(se -> oMono.apply(fv,
+								                                                                sv, tv, qv, pv, hv,
+								                                                                se.isEmpty() ? null
+								                                                                        : se.get()));
+							                                                });
+						                                        });
+					                                });
+				                        });
+			                });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H, E, O, N> Mono<N> flatMapMonoWithNull(Supplier<Mono<F>> fMono, // NOSONAR
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
+	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono, SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono,
+	        OctaFunction<F, S, T, Q, P, H, E, O, Mono<N>> nMono) {
+		// Required more than 8 arguments
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t ->
+										{
+
+					                        T tv = t.isEmpty() ? null : t.get();
+					                        return qMono.apply(fv, sv, tv)
+					                                .map(Optional::of)
+					                                .defaultIfEmpty(Optional.empty())
+					                                .flatMap(q ->
+													{
+
+						                                Q qv = q.isEmpty() ? null : q.get();
+						                                return pMono.apply(fv, sv, tv, qv)
+						                                        .map(Optional::of)
+						                                        .defaultIfEmpty(Optional.empty())
+						                                        .flatMap(p ->
+																{
+
+							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        return hMono.apply(fv, sv, tv, qv, pv)
+							                                                .map(Optional::of)
+							                                                .defaultIfEmpty(Optional.empty())
+							                                                .flatMap(h ->
+																			{
+
+								                                                H hv = h.isEmpty() ? null : h.get();
+
+								                                                return seMono
+								                                                        .apply(fv, sv, tv, qv, pv, hv)
+								                                                        .map(Optional::of)
+								                                                        .defaultIfEmpty(
+								                                                                Optional.empty())
+								                                                        .flatMap(se ->
+																						{
+
+									                                                        E sev = se.isEmpty() ? null
+									                                                                : se.get();
+									                                                        return oMono.apply(fv, sv,
+									                                                                tv, qv, pv, hv, sev)
+									                                                                .map(Optional::of)
+									                                                                .defaultIfEmpty(
+									                                                                        Optional.empty())
+									                                                                .flatMap(o -> nMono
+									                                                                        .apply(fv,
+									                                                                                sv,
+									                                                                                tv,
+									                                                                                qv,
+									                                                                                pv,
+									                                                                                hv,
+									                                                                                sev,
+									                                                                                o.isEmpty()
+									                                                                                        ? null
+									                                                                                        : o.get()));
+								                                                        });
+							                                                });
+						                                        });
+					                                });
+				                        });
+			                });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H, E, O, N, D> Mono<D> flatMapMonoWithNull(Supplier<Mono<F>> fMono, // NOSONAR
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
+	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono, SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono,
+	        OctaFunction<F, S, T, Q, P, H, E, O, Mono<N>> nMono,
+	        NanoFunction<F, S, T, Q, P, H, E, O, N, Mono<D>> dMono) {
+		// Required more than 8 arguments
+
+		return fMono.get()
+		        .map(Optional::of)
+		        .defaultIfEmpty(Optional.empty())
+		        .flatMap(f ->
+				{
+
+			        F fv = f.isEmpty() ? null : f.get();
+
+			        return sMono.apply(fv)
+			                .map(Optional::of)
+			                .defaultIfEmpty(Optional.empty())
+			                .flatMap(s ->
+							{
+
+				                S sv = s.isEmpty() ? null : s.get();
+
+				                return tMono.apply(fv, sv)
+				                        .map(Optional::of)
+				                        .defaultIfEmpty(Optional.empty())
+				                        .flatMap(t ->
+										{
+
+					                        T tv = t.isEmpty() ? null : t.get();
+					                        return qMono.apply(fv, sv, tv)
+					                                .map(Optional::of)
+					                                .defaultIfEmpty(Optional.empty())
+					                                .flatMap(q ->
+													{
+
+						                                Q qv = q.isEmpty() ? null : q.get();
+						                                return pMono.apply(fv, sv, tv, qv)
+						                                        .map(Optional::of)
+						                                        .defaultIfEmpty(Optional.empty())
+						                                        .flatMap(p ->
+																{
+
+							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        return hMono.apply(fv, sv, tv, qv, pv)
+							                                                .map(Optional::of)
+							                                                .defaultIfEmpty(Optional.empty())
+							                                                .flatMap(h ->
+																			{
+
+								                                                H hv = h.isEmpty() ? null : h.get();
+
+								                                                return seMono
+								                                                        .apply(fv, sv, tv, qv, pv, hv)
+								                                                        .map(Optional::of)
+								                                                        .defaultIfEmpty(Optional.empty())
+								                                                        .flatMap(se -> {
+								                                                        	
+								                                                        	E sev = se.isEmpty() ? null : se.get();
+								                                                        	return oMono.apply(fv, sv, tv, qv, pv, hv, sev)
+								                                                        			.map(Optional::of)
+								                                                        			.defaultIfEmpty(Optional.empty())
+													                                                .flatMap(o -> {
+													                                                	
+													                                                	O ov = o.isEmpty()? null : o.get();
+													                                                	return nMono.apply(fv, sv, tv, qv, pv, hv, sev, ov)
+													                                                			.map(Optional::of)
+														                                                        .defaultIfEmpty(Optional.empty())
+										                                                                        .flatMap(
+										                                                                                n -> dMono
+										                                                                                        .apply(fv,
+										                                                                                                sv,
+										                                                                                                tv,
+										                                                                                                qv,
+										                                                                                                pv,
+										                                                                                                hv,
+										                                                                                                sev,
+										                                                                                                ov,
+										                                                                                                n.isEmpty()? null : n.get()));
+													                                                });
+								                                                        });
+							                                                });
+						                                        });
+					                                });
+				                        });
+			                });
+		        });
+
+	}
+
+	public static <F, S> Mono<Tuple2<F, S>> flatMapConsolidate(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono) {
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.map(s -> Tuples.of(f, s));
+		        });
+	}
+
+	public static <F, S, T> Mono<Tuple3<F, S, T>> flatMapConsolidate(Supplier<Mono<F>> fMono,
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono) {
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.map(t -> Tuples.of(f, s, t));
+			        });
+		        });
+
+	}
+
+	public static <F, S, T, Q> Mono<Tuple4<F, S, T, Q>> flatMapConsolidate(Supplier<Mono<F>> fMono,
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono) {
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.flatMap(t -> {
+
+					        Mono<Q> mq = qMono.apply(f, s, t);
+					        return mq.map(q -> Tuples.of(f, s, t, q));
+				        });
+			        });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P> Mono<Tuple5<F, S, T, Q, P>> flatMapConsolidate(Supplier<Mono<F>> fMono,
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono) {
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.flatMap(t -> {
+
+					        Mono<Q> mq = qMono.apply(f, s, t);
+					        return mq.flatMap(q -> {
+
+						        Mono<P> mp = pMono.apply(f, s, t, q);
+						        return mp.map(p -> Tuples.of(f, s, t, q, p));
+					        });
+				        });
+			        });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H> Mono<Tuple6<F, S, T, Q, P, H>> flatMapConsolidate(Supplier<Mono<F>> fMono,
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono) {
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.flatMap(t -> {
+
+					        Mono<Q> mq = qMono.apply(f, s, t);
+					        return mq.flatMap(q -> {
+
+						        Mono<P> mp = pMono.apply(f, s, t, q);
+						        return mp.flatMap(p -> {
+
+							        Mono<H> mh = hMono.apply(f, s, t, q, p);
+							        return mh.map(h -> Tuples.of(f, s, t, q, p, h));
+						        });
+					        });
+				        });
+			        });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H, E> Mono<Tuple7<F, S, T, Q, P, H, E>> flatMapConsolidate(Supplier<Mono<F>> fMono,
+	        Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono, TriFunction<F, S, T, Mono<Q>> qMono,
+	        QuadFunction<F, S, T, Q, Mono<P>> pMono, PentaFunction<F, S, T, Q, P, Mono<H>> hMono,
+	        HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono) {
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.flatMap(t -> {
+
+					        Mono<Q> mq = qMono.apply(f, s, t);
+					        return mq.flatMap(q -> {
+
+						        Mono<P> mp = pMono.apply(f, s, t, q);
+						        return mp.flatMap(p -> {
+
+							        Mono<H> mh = hMono.apply(f, s, t, q, p);
+							        return mh.flatMap(h -> {
+
+								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
+								        return mSe.map(se -> Tuples.of(f, s, t, q, p, h, se));
+							        });
+						        });
+					        });
+				        });
+			        });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H, E, O> Mono<Tuple8<F, S, T, Q, P, H, E, O>> flatMapConsolidate( // NOSONAR
+	        Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono,
+	        TriFunction<F, S, T, Mono<Q>> qMono, QuadFunction<F, S, T, Q, Mono<P>> pMono,
+	        PentaFunction<F, S, T, Q, P, Mono<H>> hMono, HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono,
+	        SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono) {
+		// Required more than 8 arguments
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.flatMap(t -> {
+
+					        Mono<Q> mq = qMono.apply(f, s, t);
+					        return mq.flatMap(q -> {
+
+						        Mono<P> mp = pMono.apply(f, s, t, q);
+						        return mp.flatMap(p -> {
+
+							        Mono<H> mh = hMono.apply(f, s, t, q, p);
+							        return mh.flatMap(h -> {
+
+								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
+								        return mSe.flatMap(se -> {
+
+									        Mono<O> mo = oMono.apply(f, s, t, q, p, h, se);
+									        return mo.map(o -> Tuples.of(f, s, t, q, p, h, se, o));
+								        });
+							        });
+						        });
+					        });
+				        });
+			        });
+		        });
+
+	}
+
+	public static <F, S, T, Q, P, H, E, O, N> Mono<Tuple9<F, S, T, Q, P, H, E, O, N>> flatMapConsolidate( // NOSONAR
+	        Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono, BiFunction<F, S, Mono<T>> tMono,
+	        TriFunction<F, S, T, Mono<Q>> qMono, QuadFunction<F, S, T, Q, Mono<P>> pMono,
+	        PentaFunction<F, S, T, Q, P, Mono<H>> hMono, HexaFunction<F, S, T, Q, P, H, Mono<E>> seMono,
+	        SeptFunction<F, S, T, Q, P, H, E, Mono<O>> oMono, OctaFunction<F, S, T, Q, P, H, E, O, Mono<N>> nMono) {
+		// Required more than 8 arguments
+
+		return fMono.get()
+		        .flatMap(f ->
+				{
+			        Mono<S> ms = sMono.apply(f);
+			        return ms.flatMap(s -> {
+
+				        Mono<T> mt = tMono.apply(f, s);
+				        return mt.flatMap(t -> {
+
+					        Mono<Q> mq = qMono.apply(f, s, t);
+					        return mq.flatMap(q -> {
+
+						        Mono<P> mp = pMono.apply(f, s, t, q);
+						        return mp.flatMap(p -> {
+
+							        Mono<H> mh = hMono.apply(f, s, t, q, p);
+							        return mh.flatMap(h -> {
+
+								        Mono<E> mSe = seMono.apply(f, s, t, q, p, h);
+								        return mSe.flatMap(se -> {
+
+									        Mono<O> mo = oMono.apply(f, s, t, q, p, h, se);
+									        return mo.flatMap(o -> {
+
+										        Mono<N> mn = nMono.apply(f, s, t, q, p, h, se, o);
+										        return mn.map(n -> new Tuple9<>(f, s, t, q, p, h, se, o, n));
 									        });
 								        });
 							        });
