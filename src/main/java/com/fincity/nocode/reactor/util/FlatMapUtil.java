@@ -255,7 +255,7 @@ public class FlatMapUtil {
 		return fMono.get()
 		        .map(Optional::of)
 		        .defaultIfEmpty(Optional.empty())
-		        .flatMap(f -> sMono.apply(f.isEmpty() ? null : f.get()));
+		        .flatMap(f -> sMono.apply(f.orElse(null)));
 	}
 
 	public static <F, S, T> Mono<T> flatMapMonoWithNull(Supplier<Mono<F>> fMono, Function<F, Mono<S>> sMono,
@@ -267,12 +267,12 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
 			                .defaultIfEmpty(Optional.empty())
-			                .flatMap(s -> tMono.apply(fv, s.isEmpty() ? null : s.get()));
+			                .flatMap(s -> tMono.apply(fv, s.orElse(null)));
 		        });
 	}
 
@@ -285,7 +285,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -293,12 +293,12 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
 				                        .defaultIfEmpty(Optional.empty())
-				                        .flatMap(t -> qMono.apply(fv, sv, t.isEmpty() ? null : t.get()));
+				                        .flatMap(t -> qMono.apply(fv, sv, t.orElse(null)));
 			                });
 		        });
 	}
@@ -313,7 +313,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -321,7 +321,7 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
@@ -329,12 +329,12 @@ public class FlatMapUtil {
 				                        .flatMap(t ->
 										{
 
-					                        T tv = t.isEmpty() ? null : t.get();
+					                        T tv = t.orElse(null);
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
 					                                .flatMap(
-					                                        q -> pMono.apply(fv, sv, tv, q.isEmpty() ? null : q.get()));
+					                                        q -> pMono.apply(fv, sv, tv, q.orElse(null)));
 				                        });
 			                });
 		        });
@@ -352,7 +352,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -360,7 +360,7 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
@@ -368,19 +368,19 @@ public class FlatMapUtil {
 				                        .flatMap(t ->
 										{
 
-					                        T tv = t.isEmpty() ? null : t.get();
+					                        T tv = t.orElse(null);
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
 					                                .flatMap(q ->
 													{
 
-						                                Q qv = q.isEmpty() ? null : q.get();
+						                                Q qv = q.orElse(null);
 						                                return pMono.apply(fv, sv, tv, qv)
 						                                        .map(Optional::of)
 						                                        .defaultIfEmpty(Optional.empty())
 						                                        .flatMap(p -> hMono.apply(fv, sv, tv, qv,
-						                                                p.isEmpty() ? null : p.get()));
+						                                                p.orElse(null)));
 					                                });
 				                        });
 			                });
@@ -398,7 +398,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -406,7 +406,7 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
@@ -414,26 +414,26 @@ public class FlatMapUtil {
 				                        .flatMap(t ->
 										{
 
-					                        T tv = t.isEmpty() ? null : t.get();
+					                        T tv = t.orElse(null);
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
 					                                .flatMap(q ->
 													{
 
-						                                Q qv = q.isEmpty() ? null : q.get();
+						                                Q qv = q.orElse(null);
 						                                return pMono.apply(fv, sv, tv, qv)
 						                                        .map(Optional::of)
 						                                        .defaultIfEmpty(Optional.empty())
 						                                        .flatMap(p ->
 																{
 
-							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        P pv = p.orElse(null);
 							                                        return hMono.apply(fv, sv, tv, qv, pv)
 							                                                .map(Optional::of)
 							                                                .defaultIfEmpty(Optional.empty())
 							                                                .flatMap(h -> seMono.apply(fv, sv, tv, qv,
-							                                                        pv, h.isEmpty() ? null : h.get()));
+							                                                        pv, h.orElse(null)));
 						                                        });
 					                                });
 				                        });
@@ -453,7 +453,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -461,7 +461,7 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
@@ -469,28 +469,28 @@ public class FlatMapUtil {
 				                        .flatMap(t ->
 										{
 
-					                        T tv = t.isEmpty() ? null : t.get();
+					                        T tv = t.orElse(null);
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
 					                                .flatMap(q ->
 													{
 
-						                                Q qv = q.isEmpty() ? null : q.get();
+						                                Q qv = q.orElse(null);
 						                                return pMono.apply(fv, sv, tv, qv)
 						                                        .map(Optional::of)
 						                                        .defaultIfEmpty(Optional.empty())
 						                                        .flatMap(p ->
 																{
 
-							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        P pv = p.orElse(null);
 							                                        return hMono.apply(fv, sv, tv, qv, pv)
 							                                                .map(Optional::of)
 							                                                .defaultIfEmpty(Optional.empty())
 							                                                .flatMap(h ->
 																			{
 
-								                                                H hv = h.isEmpty() ? null : h.get();
+								                                                H hv = h.orElse(null);
 
 								                                                return seMono
 								                                                        .apply(fv, sv, tv, qv, pv, hv)
@@ -523,7 +523,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -531,7 +531,7 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
@@ -539,28 +539,28 @@ public class FlatMapUtil {
 				                        .flatMap(t ->
 										{
 
-					                        T tv = t.isEmpty() ? null : t.get();
+					                        T tv = t.orElse(null);
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
 					                                .flatMap(q ->
 													{
 
-						                                Q qv = q.isEmpty() ? null : q.get();
+						                                Q qv = q.orElse(null);
 						                                return pMono.apply(fv, sv, tv, qv)
 						                                        .map(Optional::of)
 						                                        .defaultIfEmpty(Optional.empty())
 						                                        .flatMap(p ->
 																{
 
-							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        P pv = p.orElse(null);
 							                                        return hMono.apply(fv, sv, tv, qv, pv)
 							                                                .map(Optional::of)
 							                                                .defaultIfEmpty(Optional.empty())
 							                                                .flatMap(h ->
 																			{
 
-								                                                H hv = h.isEmpty() ? null : h.get();
+								                                                H hv = h.orElse(null);
 
 								                                                return seMono
 								                                                        .apply(fv, sv, tv, qv, pv, hv)
@@ -612,7 +612,7 @@ public class FlatMapUtil {
 		        .flatMap(f ->
 				{
 
-			        F fv = f.isEmpty() ? null : f.get();
+			        F fv = f.orElse(null);
 
 			        return sMono.apply(fv)
 			                .map(Optional::of)
@@ -620,7 +620,7 @@ public class FlatMapUtil {
 			                .flatMap(s ->
 							{
 
-				                S sv = s.isEmpty() ? null : s.get();
+				                S sv = s.orElse(null);
 
 				                return tMono.apply(fv, sv)
 				                        .map(Optional::of)
@@ -628,28 +628,28 @@ public class FlatMapUtil {
 				                        .flatMap(t ->
 										{
 
-					                        T tv = t.isEmpty() ? null : t.get();
+					                        T tv = t.orElse(null);
 					                        return qMono.apply(fv, sv, tv)
 					                                .map(Optional::of)
 					                                .defaultIfEmpty(Optional.empty())
 					                                .flatMap(q ->
 													{
 
-						                                Q qv = q.isEmpty() ? null : q.get();
+						                                Q qv = q.orElse(null);
 						                                return pMono.apply(fv, sv, tv, qv)
 						                                        .map(Optional::of)
 						                                        .defaultIfEmpty(Optional.empty())
 						                                        .flatMap(p ->
 																{
 
-							                                        P pv = p.isEmpty() ? null : p.get();
+							                                        P pv = p.orElse(null);
 							                                        return hMono.apply(fv, sv, tv, qv, pv)
 							                                                .map(Optional::of)
 							                                                .defaultIfEmpty(Optional.empty())
 							                                                .flatMap(h ->
 																			{
 
-								                                                H hv = h.isEmpty() ? null : h.get();
+								                                                H hv = h.orElse(null);
 
 								                                                return seMono
 								                                                        .apply(fv, sv, tv, qv, pv, hv)
@@ -657,7 +657,7 @@ public class FlatMapUtil {
 								                                                        .defaultIfEmpty(Optional.empty())
 								                                                        .flatMap(se -> {
 								                                                        	
-								                                                        	E sev = se.isEmpty() ? null : se.get();
+								                                                        	E sev = se.orElse(null);
 								                                                        	return oMono.apply(fv, sv, tv, qv, pv, hv, sev)
 								                                                        			.map(Optional::of)
 								                                                        			.defaultIfEmpty(Optional.empty())
