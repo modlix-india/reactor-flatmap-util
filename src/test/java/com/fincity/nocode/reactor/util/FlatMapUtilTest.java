@@ -30,10 +30,15 @@ class FlatMapUtilTest {
 
 		        f -> secondNull(),
 
-		        (f, s) -> third());
+		        (f, s) -> third(),
+
+		        (f, s, t) -> fourth(),
+
+		        (f, s, t, fo) -> fifth())
+				.switchIfEmpty(Mono.just(-1));
 
 		StepVerifier.create(numbers)
-		        .expectNext(3)
+		        .expectNext(5)
 		        .verifyComplete();
 
 		Mono<Tuple3<Integer, Integer, Integer>> numbers3 = FlatMapUtil.flatMapConsolidateLog(
@@ -43,25 +48,39 @@ class FlatMapUtilTest {
 		        f -> second(),
 
 		        (f, s) -> third());
-		
+
 		StepVerifier.create(numbers3)
-			.expectNext(Tuples.of(1, 2, 3))
-			.verifyComplete();
+		        .expectNext(Tuples.of(1, 2, 3))
+		        .verifyComplete();
 	}
 
 	Mono<Integer> first() {
+		System.out.println("Here in 1");
 		return Mono.just(1);
 	}
 
 	Mono<Integer> second() {
+		System.out.println("Here in 2");
 		return Mono.just(2);
 	}
 
 	Mono<Integer> secondNull() {
+		System.out.println("Here in 2 null");
 		return Mono.empty();
 	}
 
 	Mono<Integer> third() {
+		System.out.println("Here in 3");
 		return Mono.just(3);
+	}
+
+	Mono<Integer> fourth() {
+		System.out.println("Here in 4");
+		return Mono.just(4);
+	}
+
+	Mono<Integer> fifth() {
+		System.out.println("Here in 5");
+		return Mono.just(5);
 	}
 }
