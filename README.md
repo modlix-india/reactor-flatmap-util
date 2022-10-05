@@ -112,14 +112,14 @@ public Mono<AuthenticationResponse> authenticate(AuthenticationRequest authReque
     <dependency>
         <groupId>com.fincity.nocode</groupId>
         <artifactId>reactor-flatmap-util</artifactId>
-        <version>1.0.0</version>
+        <version>1.2.0</version>
     </dependency>
 ```
 
 **Gradle**
 
 ```gradle
-compile "com.fincity.nocode:reactor-flatmap-util:1.0.0"
+compile "com.fincity.nocode:reactor-flatmap-util:1.2.0"
 ```
 
 ## Getting Started
