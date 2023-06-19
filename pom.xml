@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.fincity.nocode</groupId>
 	<artifactId>reactor-flatmap-util</artifactId>
-	<version>1.2.0</version>
+	<version>1.3.0</version>
 	<name>reactor-flatmap-util</name>
 	<description>Flatmap is a callback hell, this util will help write clear code.</description>
 	<url>https://github.com/fincity-india/reactor-flatmap-util/tree/master</url>
