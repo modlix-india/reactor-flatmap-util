@@ -12,7 +12,7 @@ class FlatMapUtilTest {
 	@Test
 	void test() {
 
-		Mono<Integer> number = FlatMapUtil.flatMapMonoLog(
+		Mono<Integer> number = FlatMapUtil.flatMapMono(
 
 		        () -> first(),
 
@@ -24,7 +24,7 @@ class FlatMapUtilTest {
 		        .expectNext(3)
 		        .verifyComplete();
 
-		Mono<Integer> numbers = FlatMapUtil.flatMapMonoWithNullLog(
+		Mono<Integer> numbers = FlatMapUtil.flatMapMonoWithNull(
 
 		        () -> first(),
 
@@ -35,13 +35,13 @@ class FlatMapUtilTest {
 		        (f, s, t) -> fourth(),
 
 		        (f, s, t, fo) -> fifth())
-				.switchIfEmpty(Mono.just(-1));
+		        .switchIfEmpty(Mono.just(-1));
 
 		StepVerifier.create(numbers)
 		        .expectNext(5)
 		        .verifyComplete();
 
-		Mono<Tuple3<Integer, Integer, Integer>> numbers3 = FlatMapUtil.flatMapConsolidateLog(
+		Mono<Tuple3<Integer, Integer, Integer>> numbers3 = FlatMapUtil.flatMapMonoConsolidate(
 
 		        () -> first(),
 
